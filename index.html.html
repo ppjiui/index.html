@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Printable Food Tags (9x6cm) - 8 per page</title>
+    <style>
+        @page { 
+            size: A4; 
+            margin: 0; 
+        }
+        body { 
+            margin: 0; 
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .controls {
+            padding: 10px;
+            background: #f0f0f0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .page {
+            width: 210mm;
+            height: 297mm;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 5mm;
+            padding: 10mm;
+            box-sizing: border-box;
+            background: #f9f9f9;
+            margin: 10px auto;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+            overflow: hidden;
+        }
+        .tag {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3mm;
+            background: #F8F5F0;
+            border: 2px solid #FFD700;
+            box-shadow: 0 1mm 2mm rgba(0,0,0,0.05);
+            border-radius: 0;
+            width: 90mm;
+            height: 60mm;
+            page-break-inside: avoid;
+        }
+        .logo {
+            max-width: 80%;
+            max-height: 12mm;
+            margin-bottom: 2mm;
+            object-fit: contain;
+        }
+        .food-name {
+            font-size: 10mm;
+            font-weight: bold;
+            color: #222;
+            text-align: center;
+            margin: 2mm 0;
+            text-transform: uppercase;
+            word-break: break-word;
+            width: 100%;
+        }
+        .description {
+            font-size: 4mm;
+            color: #555;
+            text-align: center;
+            word-break: break-word;
+            width: 100%;
+        }
+        .accent-bar {
+            width: 70%;
+            height: 1.5mm;
+            background: #FFD700;
+            margin: 1mm 0;
+        }
+        button {
+            padding: 8px 15px;
+            background: #FFD700;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 150px;
+        }
+        .size-display {
+            min-width: 50px;
+            display: inline-block;
+            text-align: center;
+        }
+        @media print {
+            .controls {
+                display: none;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .page {
+                background: white;
+                margin: 0;
+                padding: 10mm;
+                height: 297mm;
+            }
+            .tag {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background: #F8F5F0 !important;
+                border: 2px solid #FFD700 !important;
+            }
+            .accent-bar {
+                background: #FFD700 !important;
+            }
+        }
+    </style>
+<link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAABzBAMAAADNp0tiAAAAElBMVEW8j1NHcEwlHBBxVjEkHBCie0fOj2bZAAAABXRSTlP+AFXpnCkdkxwAAAOaSURBVGje7ZnLsqMgEECpstyP6A8AZu8V2U8w2VM38f9/ZXzE+GpEArKYSi+yUMKhnzSIkjDyB31BAUGUBAKxayhQGQh0eQYC/Y1IGFARhwHhIr4GAaUKlWFACFVBQBeEeBDQHaEHCQDCAqEoBCgrEPog7OxBbdCh+CcAiKFWylCgRwCQ6ED20WANwkUHso8Ga1AXCy2oPB3Uuwih5+kgMYCis0GDiz6IBltQpgaQdcragl4uQuj3ZJAYQdG5oNFF9k6yBakRZJuylqC3i6zr6gTCR2xxn0DPT0GZtHHRMSflBNKoIoezqBezkzCHQEld2rjoSCYxGMTMvU0xBxlth0UFRl3WlDaWMwd4qkoQhAvTGheWM9oOi/lS5nlUmLazYgkyrIupSAO6oMf1aHCbK3gmFg3tHJQaet2V5faLA+ZqcRaYg1pf7xlvrdC+7ZhaLmQOwvvNbqrQcZVawy3nWhTVbrPRGg+LDWdnMF+/XYB2u11AIb2l6+5tpd0m+rk0f4YU0qrExGbJC9Dg7kgeVUi3qkxso3+58Q1x9ZBHFYJVeo2NrnrQRftvpmBQXMGBsDlxLEHjdBtSplEIUP+te7kDepdnLgm0SEj4clE5H+f42QFNyd/w2UpxrdAxEmZT43fd64ImCzX8vbXjutjhtG6i48CcC12YrEDzuvngJSUkoTlHBnl0hsYLzKZLWoFSFU9Dm6bhrQhlAsX9ON40O3VwBcLGSY/KerNagwpfoFUsbFriuyd9Nqm4BjEU+0E9DU1+5slJm2q7Bvly0tpF22OL8AQiJhA7x0VbUOoHVBpBflJ220xtQeIUFwFnWC9OipJAoPIAKD2hooIgHykLNNbAPYNAyn8sQKDaXaPHoZsTdkYsQKDU1XIKOgoCIPdogL6YQZdOd//pCoPYCS4CQc5O+jkIcnUSeA4GLwYL7+mqAd1daoOCP8WAIKa8xwIMcuy5fg6D3KIB/sAN3xLX3CTVS6BXFiBKKcajeph2IuUtv/WS53Qmef56PEg7irrce+NOCMUUlhEzLMEFRFpIx5mT3lzZ6tEpI3sOIU43+YQMHALoI+Vg0UEfnLhqhAlsO5l3QuVLT5I4akR7GMagn+RkT/opCOsiYIy63m6zYLQBYXn7QOq6vlW32zXxmbA7UlqACu819QzQ73+n0RcUJBjucRPHSn3y08A7uQY07GVSI10B7X5WD4cnOXXbJpzlC/qCvqAvCAD9A6M7x+SW47sWAAAAAElFTkSuQmCC" type="image/x-icon">
+</head>
+<body>
+    <div class="controls">
+        <div class="control-group">
+            <label>Tag Width:</label>
+            <input type="range" id="width-control" min="50" max="120" value="90">
+            <span class="size-display" id="width-display">90mm</span>
+        </div>
+        <div class="control-group">
+            <label>Tag Height:</label>
+            <input type="range" id="height-control" min="40" max="100" value="60">
+            <span class="size-display" id="height-display">60mm</span>
+        </div>
+        <div class="control-group">
+            <label>Font Size:</label>
+            <input type="range" id="font-control" min="3" max="15" value="10">
+            <span class="size-display" id="font-display">10mm</span>
+        </div>
+        <button onclick="printTags()">Print Tags</button>
+        <button onclick="resetSizes()">Reset Sizes</button>
+    </div>
+
+    <div class="page">
+        <!-- Editable Tags - Exactly 8 tags per page -->
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">PASTA CARBONARA</div>
+            <div class="description">Creamy sauce with pancetta</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">BEEF WELLINGTON</div>
+            <div class="description">Tender beef in puff pastry</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">CAPRESE SALAD</div>
+            <div class="description">Fresh mozzarella & tomatoes</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">TIRAMISU</div>
+            <div class="description">Classic Italian dessert</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">BRUSCHETTA</div>
+            <div class="description">Toasted bread with toppings</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">MUSHROOM RISOTTO</div>
+            <div class="description">Creamy Arborio rice</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">LASAGNA</div>
+            <div class="description">Layered pasta with meat sauce</div>
+        </div>
+
+        <div class="tag" contenteditable="true">
+            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+            <div class="accent-bar"></div>
+            <div class="food-name">MARGHERITA PIZZA</div>
+            <div class="description">Tomato, mozzarella & basil</div>
+        </div>
+    </div>
+
+    <script>
+        // Get controls
+        const widthControl = document.getElementById('width-control');
+        const heightControl = document.getElementById('height-control');
+        const fontControl = document.getElementById('font-control');
+        const widthDisplay = document.getElementById('width-display');
+        const heightDisplay = document.getElementById('height-display');
+        const fontDisplay = document.getElementById('font-display');
+        const tags = document.querySelectorAll('.tag');
+        const foodNames = document.querySelectorAll('.food-name');
+
+        // Update tag sizes when controls change
+        widthControl.addEventListener('input', updateSizes);
+        heightControl.addEventListener('input', updateSizes);
+        fontControl.addEventListener('input', updateFontSizes);
+
+        function updateSizes() {
+            const width = widthControl.value;
+            const height = heightControl.value;
+            
+            widthDisplay.textContent = `${width}mm`;
+            heightDisplay.textContent = `${height}mm`;
+            
+            tags.forEach(tag => {
+                tag.style.width = `${width}mm`;
+                tag.style.height = `${height}mm`;
+            });
+        }
+
+        function updateFontSizes() {
+            const fontSize = fontControl.value;
+            fontDisplay.textContent = `${fontSize}mm`;
+            
+            foodNames.forEach(name => {
+                name.style.fontSize = `${fontSize}mm`;
+            });
+        }
+
+        function resetSizes() {
+            widthControl.value = 90;
+            heightControl.value = 60;
+            fontControl.value = 10;
+            updateSizes();
+            updateFontSizes();
+        }
+
+        function printTags() {
+            // Hide controls before printing
+            document.querySelector('.controls').style.display = 'none';
+            window.print();
+            // Show controls after printing (if user cancels)
+            setTimeout(() => {
+                document.querySelector('.controls').style.display = 'flex';
+            }, 1000);
+        }
+
+        // Initialize
+        updateSizes();
+        updateFontSizes();
+    </script>
+</body>
+</html>
