@@ -28,6 +28,10 @@
             align-items: center;
             gap: 5px;
         }
+        .pages-container {
+            flex: 1;
+            overflow-y: auto;
+        }
         .page {
             width: 210mm;
             height: 297mm;
@@ -102,8 +106,16 @@
             display: inline-block;
             text-align: center;
         }
+        .file-input {
+            display: none;
+        }
+        .page-controls {
+            text-align: center;
+            padding: 10px;
+            background: #e0e0e0;
+        }
         @media print {
-            .controls {
+            .controls, .page-controls {
                 display: none;
             }
             body {
@@ -149,65 +161,14 @@
         </div>
         <button onclick="printTags()">Print Tags</button>
         <button onclick="resetSizes()">Reset Sizes</button>
+        <button onclick="addNewPage()">Add Page</button>
+        <button onclick="exportToJson()">Save to JSON</button>
+        <button onclick="document.getElementById('file-input').click()">Load from JSON</button>
+        <input type="file" id="file-input" class="file-input" accept=".json" onchange="importFromJson(event)">
     </div>
 
-    <div class="page">
-        <!-- Editable Tags - Exactly 8 tags per page -->
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">PASTA CARBONARA</div>
-            <div class="description">Creamy sauce with pancetta</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">BEEF WELLINGTON</div>
-            <div class="description">Tender beef in puff pastry</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">CAPRESE SALAD</div>
-            <div class="description">Fresh mozzarella & tomatoes</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">TIRAMISU</div>
-            <div class="description">Classic Italian dessert</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">BRUSCHETTA</div>
-            <div class="description">Toasted bread with toppings</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">MUSHROOM RISOTTO</div>
-            <div class="description">Creamy Arborio rice</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">LASAGNA</div>
-            <div class="description">Layered pasta with meat sauce</div>
-        </div>
-
-        <div class="tag" contenteditable="true">
-            <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-            <div class="accent-bar"></div>
-            <div class="food-name">MARGHERITA PIZZA</div>
-            <div class="description">Tomato, mozzarella & basil</div>
-        </div>
+    <div class="pages-container" id="pages-container">
+        <!-- Pages will be added here dynamically -->
     </div>
 
     <script>
@@ -218,8 +179,31 @@
         const widthDisplay = document.getElementById('width-display');
         const heightDisplay = document.getElementById('height-display');
         const fontDisplay = document.getElementById('font-display');
-        const tags = document.querySelectorAll('.tag');
-        const foodNames = document.querySelectorAll('.food-name');
+        const pagesContainer = document.getElementById('pages-container');
+
+        // Template for a new tag
+        const tagTemplate = `
+            <div class="tag" contenteditable="true">
+                <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+                <div class="accent-bar"></div>
+                <div class="food-name">NEW ITEM</div>
+                <div class="description">Item description</div>
+            </div>
+        `;
+
+        // Template for a new page
+        const pageTemplate = `
+            <div class="page">
+                ${tagTemplate.repeat(8)}
+                <div class="page-controls">
+                    <button onclick="removePage(this)">Remove Page</button>
+                    <button onclick="duplicatePage(this)">Duplicate Page</button>
+                </div>
+            </div>
+        `;
+
+        // Initialize with one page
+        addNewPage();
 
         // Update tag sizes when controls change
         widthControl.addEventListener('input', updateSizes);
@@ -233,7 +217,7 @@
             widthDisplay.textContent = `${width}mm`;
             heightDisplay.textContent = `${height}mm`;
             
-            tags.forEach(tag => {
+            document.querySelectorAll('.tag').forEach(tag => {
                 tag.style.width = `${width}mm`;
                 tag.style.height = `${height}mm`;
             });
@@ -243,7 +227,7 @@
             const fontSize = fontControl.value;
             fontDisplay.textContent = `${fontSize}mm`;
             
-            foodNames.forEach(name => {
+            document.querySelectorAll('.food-name').forEach(name => {
                 name.style.fontSize = `${fontSize}mm`;
             });
         }
@@ -259,16 +243,115 @@
         function printTags() {
             // Hide controls before printing
             document.querySelector('.controls').style.display = 'none';
+            document.querySelectorAll('.page-controls').forEach(ctrl => ctrl.style.display = 'none');
             window.print();
             // Show controls after printing (if user cancels)
             setTimeout(() => {
                 document.querySelector('.controls').style.display = 'flex';
+                document.querySelectorAll('.page-controls').forEach(ctrl => ctrl.style.display = 'block');
             }, 1000);
         }
 
-        // Initialize
-        updateSizes();
-        updateFontSizes();
+        function addNewPage() {
+            const newPage = document.createElement('div');
+            newPage.innerHTML = pageTemplate;
+            pagesContainer.appendChild(newPage);
+            updateSizes();
+            updateFontSizes();
+        }
+
+        function removePage(button) {
+            const page = button.closest('.page');
+            if (document.querySelectorAll('.page').length > 1) {
+                page.remove();
+            } else {
+                alert("You need to keep at least one page.");
+            }
+        }
+
+        function duplicatePage(button) {
+            const page = button.closest('.page');
+            const clone = page.cloneNode(true);
+            pagesContainer.appendChild(clone);
+        }
+
+        function exportToJson() {
+            const pages = Array.from(document.querySelectorAll('.page')).map(page => {
+                return Array.from(page.querySelectorAll('.tag')).map(tag => {
+                    return {
+                        foodName: tag.querySelector('.food-name').textContent,
+                        description: tag.querySelector('.description').textContent
+                    };
+                });
+            });
+            
+            const data = {
+                width: widthControl.value,
+                height: heightControl.value,
+                fontSize: fontControl.value,
+                pages: pages
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'food-tags.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importFromJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Clear existing pages
+                    pagesContainer.innerHTML = '';
+                    
+                    // Apply settings
+                    widthControl.value = data.width || 90;
+                    heightControl.value = data.height || 60;
+                    fontControl.value = data.fontSize || 10;
+                    updateSizes();
+                    updateFontSizes();
+                    
+                    // Create pages and tags
+                    data.pages.forEach(pageData => {
+                        const newPage = document.createElement('div');
+                        newPage.innerHTML = pageTemplate;
+                        
+                        // Update tags with saved data
+                        const tags = newPage.querySelectorAll('.tag');
+                        pageData.forEach((tagData, index) => {
+                            if (index < tags.length) {
+                                tags[index].querySelector('.food-name').textContent = tagData.foodName || 'NEW ITEM';
+                                tags[index].querySelector('.description').textContent = tagData.description || 'Item description';
+                            }
+                        });
+                        
+                        pagesContainer.appendChild(newPage);
+                    });
+                    
+                    // If no pages were loaded, add one
+                    if (data.pages.length === 0) {
+                        addNewPage();
+                    }
+                } catch (error) {
+                    alert('Error loading JSON file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
     </script>
 </body>
 </html>
