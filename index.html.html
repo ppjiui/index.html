@@ -46,6 +46,7 @@
             page-break-after: avoid;
             page-break-inside: avoid;
             overflow: hidden;
+            position: relative;
         }
         .tag {
             display: flex;
@@ -60,12 +61,41 @@
             width: 90mm;
             height: 60mm;
             page-break-inside: avoid;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag:hover {
+            background: #FFF0D0;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .tag:hover .delete-btn {
+            opacity: 1;
         }
         .logo {
             max-width: 80%;
             max-height: 12mm;
             margin-bottom: 2mm;
             object-fit: contain;
+            pointer-events: none;
+            user-select: none;
         }
         .food-name {
             font-size: 10mm;
@@ -77,18 +107,13 @@
             word-break: break-word;
             width: 100%;
         }
-        .description {
-            font-size: 4mm;
-            color: #555;
-            text-align: center;
-            word-break: break-word;
-            width: 100%;
-        }
         .accent-bar {
             width: 70%;
             height: 1.5mm;
             background: #FFD700;
             margin: 1mm 0;
+            pointer-events: none;
+            user-select: none;
         }
         button {
             padding: 8px 15px;
@@ -114,8 +139,20 @@
             padding: 10px;
             background: #e0e0e0;
         }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
         @media print {
-            .controls, .page-controls {
+            .controls, .page-controls, .delete-btn {
                 display: none;
             }
             body {
@@ -159,13 +196,16 @@
             <input type="range" id="font-control" min="3" max="15" value="10">
             <span class="size-display" id="font-display">10mm</span>
         </div>
-        <button onclick="printTags()">Print Tags</button>
         <button onclick="resetSizes()">Reset Sizes</button>
-        <button onclick="addNewPage()">Add Page</button>
+        <button onclick="addNewPage()" style="cursor: pointer;">Add Page</button>
+        <button onclick="removeCurrentPage()" style="cursor: pointer;">Remove Page</button>
+        <button onclick="printTags()">Print Tags</button>
         <button onclick="exportToJson()">Save to JSON</button>
         <button onclick="document.getElementById('file-input').click()">Load from JSON</button>
         <input type="file" id="file-input" class="file-input" accept=".json" onchange="importFromJson(event)">
     </div>
+
+    <div class="notification" id="notification">Tag deleted</div>
 
     <div class="pages-container" id="pages-container">
         <!-- Pages will be added here dynamically -->
@@ -180,14 +220,15 @@
         const heightDisplay = document.getElementById('height-display');
         const fontDisplay = document.getElementById('font-display');
         const pagesContainer = document.getElementById('pages-container');
+        const notification = document.getElementById('notification');
 
         // Template for a new tag
         const tagTemplate = `
-            <div class="tag" contenteditable="true">
+            <div class="tag">
+                <div class="delete-btn">×</div>
                 <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
                 <div class="accent-bar"></div>
-                <div class="food-name">NEW ITEM</div>
-                <div class="description">Item description</div>
+                <div class="food-name" contenteditable="true">NEW ITEM</div>
             </div>
         `;
 
@@ -195,10 +236,6 @@
         const pageTemplate = `
             <div class="page">
                 ${tagTemplate.repeat(8)}
-                <div class="page-controls">
-                    <button onclick="removePage(this)">Remove Page</button>
-                    <button onclick="duplicatePage(this)">Duplicate Page</button>
-                </div>
             </div>
         `;
 
@@ -209,6 +246,13 @@
         widthControl.addEventListener('input', updateSizes);
         heightControl.addEventListener('input', updateSizes);
         fontControl.addEventListener('input', updateFontSizes);
+
+        function showNotification() {
+            notification.style.opacity = 1;
+            setTimeout(() => {
+                notification.style.opacity = 0;
+            }, 2000);
+        }
 
         function updateSizes() {
             const width = widthControl.value;
@@ -241,14 +285,10 @@
         }
 
         function printTags() {
-            // Hide controls before printing
             document.querySelector('.controls').style.display = 'none';
-            document.querySelectorAll('.page-controls').forEach(ctrl => ctrl.style.display = 'none');
             window.print();
-            // Show controls after printing (if user cancels)
             setTimeout(() => {
                 document.querySelector('.controls').style.display = 'flex';
-                document.querySelectorAll('.page-controls').forEach(ctrl => ctrl.style.display = 'block');
             }, 1000);
         }
 
@@ -258,29 +298,83 @@
             pagesContainer.appendChild(newPage);
             updateSizes();
             updateFontSizes();
+            setupTagDeletion(newPage);
         }
 
-        function removePage(button) {
-            const page = button.closest('.page');
-            if (document.querySelectorAll('.page').length > 1) {
-                page.remove();
+        function removeCurrentPage() {
+            const pages = document.querySelectorAll('.page');
+            if (pages.length > 1) {
+                pages[pages.length - 1].remove();
             } else {
                 alert("You need to keep at least one page.");
             }
         }
 
-        function duplicatePage(button) {
-            const page = button.closest('.page');
-            const clone = page.cloneNode(true);
-            pagesContainer.appendChild(clone);
+        function setupTagDeletion(page) {
+            const deleteButtons = page.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const tag = this.closest('.tag');
+                    tag.remove();
+                    reorganizeTags();
+                    showNotification();
+                });
+            });
+        }
+
+        function reorganizeTags() {
+            const allTags = Array.from(document.querySelectorAll('.tag'));
+            const pages = document.querySelectorAll('.page');
+            
+            // Clear all tags from pages
+            pages.forEach(page => {
+                const tagsInPage = page.querySelectorAll('.tag');
+                tagsInPage.forEach(tag => tag.remove());
+            });
+            
+            // Redistribute tags evenly across pages
+            let currentPageIndex = 0;
+            let tagsInCurrentPage = 0;
+            
+            allTags.forEach((tag, index) => {
+                if (tagsInCurrentPage >= 8) {
+                    currentPageIndex++;
+                    tagsInCurrentPage = 0;
+                    
+                    // Add new page if needed
+                    if (!pages[currentPageIndex]) {
+                        addNewPage();
+                        pages = document.querySelectorAll('.page'); // Refresh pages list
+                    }
+                }
+                
+                pages[currentPageIndex].appendChild(tag);
+                tagsInCurrentPage++;
+            });
+            
+            // Remove empty pages (except one)
+            const emptyPages = Array.from(pages).filter(page => {
+                return page.querySelectorAll('.tag').length === 0;
+            });
+            
+            emptyPages.forEach((page, index) => {
+                if (document.querySelectorAll('.page').length > 1 && index < emptyPages.length - 1) {
+                    page.remove();
+                }
+            });
+            
+            // Reattach delete handlers to all tags
+            document.querySelectorAll('.page').forEach(page => {
+                setupTagDeletion(page);
+            });
         }
 
         function exportToJson() {
             const pages = Array.from(document.querySelectorAll('.page')).map(page => {
                 return Array.from(page.querySelectorAll('.tag')).map(tag => {
                     return {
-                        foodName: tag.querySelector('.food-name').textContent,
-                        description: tag.querySelector('.description').textContent
+                        foodName: tag.querySelector('.food-name').textContent
                     };
                 });
             });
@@ -332,11 +426,11 @@
                         pageData.forEach((tagData, index) => {
                             if (index < tags.length) {
                                 tags[index].querySelector('.food-name').textContent = tagData.foodName || 'NEW ITEM';
-                                tags[index].querySelector('.description').textContent = tagData.description || 'Item description';
                             }
                         });
                         
                         pagesContainer.appendChild(newPage);
+                        setupTagDeletion(newPage);
                     });
                     
                     // If no pages were loaded, add one
@@ -352,6 +446,11 @@
             // Reset file input
             event.target.value = '';
         }
+
+        // Initialize tag deletion for existing pages
+        document.querySelectorAll('.page').forEach(page => {
+            setupTagDeletion(page);
+        });
     </script>
 </body>
 </html>
