@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Printable Food Tags (69x44mm) - 10 per page</title>
+    <title>Printable Food Tags (9x6cm) - 8 per page</title>
     <style>
         @page { 
             size: A4; 
-            margin: 0.5mm; /* Small margin to prevent cutting */
+            margin: 0; 
         }
         body { 
             margin: 0; 
@@ -22,9 +22,6 @@
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
         .control-group {
             display: flex;
@@ -39,10 +36,10 @@
             width: 210mm;
             height: 297mm;
             display: grid;
-            grid-template-columns: repeat(2, 69mm);
-            grid-template-rows: repeat(5, 44mm);
-            gap: 12mm 12mm; /* Equal 12mm gaps */
-            padding: 8.5mm 15mm; /* Perfectly centered */
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 5mm;
+            padding: 10mm;
             box-sizing: border-box;
             background: #f9f9f9;
             margin: 10px auto;
@@ -56,13 +53,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2mm;
+            padding: 3mm;
             background: #F8F5F0;
             border: 2px solid #FFD700;
             box-shadow: 0 1mm 2mm rgba(0,0,0,0.05);
             border-radius: 0;
-            width: 69mm;
-            height: 44mm;
+            width: 90mm;
+            height: 60mm;
             page-break-inside: avoid;
             position: relative;
             cursor: pointer;
@@ -70,17 +67,6 @@
         }
         .tag:hover {
             background: #FFF0D0;
-        }
-        .tag-empty {
-            background: #f0f0f0;
-            border: 2px dashed #aaa;
-        }
-        .tag-empty .food-name,
-        .tag-empty .food-description {
-            color: #aaa;
-        }
-        .tag-empty .logo {
-            opacity: 0.3;
         }
         .delete-btn {
             position: absolute;
@@ -105,34 +91,25 @@
         }
         .logo {
             max-width: 80%;
-            max-height: 8mm;
-            margin-bottom: 1mm;
+            max-height: 12mm;
+            margin-bottom: 2mm;
             object-fit: contain;
             pointer-events: none;
             user-select: none;
         }
         .food-name {
-            font-size: 7mm;
+            font-size: 10mm;
             font-weight: bold;
             color: #222;
             text-align: center;
-            margin: 1mm 0;
+            margin: 2mm 0;
             text-transform: uppercase;
             word-break: break-word;
             width: 100%;
-        }
-        .food-description {
-            font-size: 4mm;
-            color: #555;
-            text-align: center;
-            margin: 1mm 0;
-            word-break: break-word;
-            width: 100%;
-            text-transform: uppercase;
         }
         .accent-bar {
             width: 70%;
-            height: 1mm;
+            height: 1.5mm;
             background: #FFD700;
             margin: 1mm 0;
             pointer-events: none;
@@ -157,6 +134,11 @@
         .file-input {
             display: none;
         }
+        .page-controls {
+            text-align: center;
+            padding: 10px;
+            background: #e0e0e0;
+        }
         .notification {
             position: fixed;
             top: 20px;
@@ -169,34 +151,8 @@
             opacity: 0;
             transition: opacity 0.5s;
         }
-        .txt-upload-btn {
-            background: #2b579a;
-            color: white;
-        }
-        .veg-btn {
-            background: #4CAF50;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        .nonveg-btn {
-            background: #f44336;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
         @media print {
-            .controls, .delete-btn {
+            .controls, .page-controls, .delete-btn {
                 display: none;
             }
             body {
@@ -207,60 +163,46 @@
             .page {
                 background: white;
                 margin: 0;
-                padding: 8.5mm 15mm !important;
+                padding: 10mm;
                 height: 297mm;
-                gap: 12mm 12mm !important;
             }
             .tag {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 background: #F8F5F0 !important;
                 border: 2px solid #FFD700 !important;
-                width: 69mm !important;
-                height: 44mm !important;
-            }
-            .tag-empty {
-                background: #f9f9f9 !important;
-                border: 2px dashed #ccc !important;
             }
             .accent-bar {
                 background: #FFD700 !important;
             }
         }
     </style>
-    <link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAABzBAMAAADNp0tiAAAAElBMVEW8j1NHcEwlHBBxVjEkHBCie0fOj2bZAAAABXRSTlP+AFXpnCkdkxwAAAOaSURBVGje7ZnLsqMgEECpstyP6A8AZu8V2U8w2VM38f9/ZXzE+GpEArKYSi+yUMKhnzSIkjDyB31BAUGUBAKxayhQGQh0eQYC/Y1IGFARhwHhIr4GAaUKlWFACFVBQBeEeBDQHaEHCQDCAqEoBCgrEPog7OxBbdCh+CcAiKFWylCgRwCQ6ED20WANwkUHso8Ga1AXCy2oPB3Uuwih5+kgMYCis0GDiz6IBltQpgaQdcragl4uQuj3ZJAYQdG5oNFF9k6yBakRZJuylqC3i6zr6gTCR2xxn0DPT0GZtHHRMSflBNKoIoezqBezkzCHQEld2rjoSCYxGMTMvU0xBxlth0UFRl3WlDaWMwd4qkoQhAvTGheWM9oOi/lS5nlUmLazYgkyrIupSAO6oMf1aHCbK3gmFg3tHJQaet2V5faLA+ZqcRaYg1pf7xlvrdC+7ZhaLmQOwvvNbqrQcZVawy3nWhTVbrPRGg+LDWdnMF+/XYB2u11AIb2l6+5tpd0m+rk0f4YU0qrExGbJC9Dg7kgeVUi3qkxso3+58Q1x9ZBHFYJVeo2NrnrQRftvpmBQXMGBsDlxLEHjdBtSplEIUP+te7kDepdnLgm0SEj4clE5H+f42QFNyd/w2UpxrdAxEmZT43fd64ImCzX8vbXjutjhtG6i48CcC12YrEDzuvngJSUkoTlHBnl0hsYLzKZLWoFSFU9Dm6bhrQhlAsX9ON40O3VwBcLGSY/KerNagwpfoFUsbFriuyd9Nqm4BjEU+0E9DU1+5slJm2q7Bvly0tpF22OL8AQiJhA7x0VbUOoHVBpBflJ220xtQeIUFwFnWC9OipJAoPIAKD2hooIgHykLNNbAPYNAyn8sQKDaXaPHoZsTdkYsQKDU1XIKOgoCIPdogL6YQZdOd//pCoPYCS4CQc5O+jkIcnUSeA4GLwYL7+mqAd1daoOCP8WAIKa8xwIMcuy5fg6D3KIB/sAN3xLX3CTVS6BXFiBKKcajeph2IuUtv/WS53Qmef56PEg7irrce+NOCMUUlhEzLMEFRFpIx5mT3lzZ6tEpI3sOIU43+YQMHALoI+Vg0UEfnLhqhAlsO5l3QuVLT5I4akR7GMagn+RkT/opCOsiYIy63m6zYLQBYXn7QOq6vlW32zXxmbA7UlqACu819QzQ73+n0RcUJBjucRPHSn3y08A7uQY07GVSI10B7X5WD4cnOXXbJpzlC/qCvqAvCAD9A6M7x+SW47sWAAAAAElFTkSuQmCC" type="image/x-icon">
+<link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAABzBAMAAADNp0tiAAAAElBMVEW8j1NHcEwlHBBxVjEkHBCie0fOj2bZAAAABXRSTlP+AFXpnCkdkxwAAAOaSURBVGje7ZnLsqMgEECpstyP6A8AZu8V2U8w2VM38f9/ZXzE+GpEArKYSi+yUMKhnzSIkjDyB31BAUGUBAKxayhQGQh0eQYC/Y1IGFARhwHhIr4GAaUKlWFACFVBQBeEeBDQHaEHCQDCAqEoBCgrEPog7OxBbdCh+CcAiKFWylCgRwCQ6ED20WANwkUHso8Ga1AXCy2oPB3Uuwih5+kgMYCis0GDiz6IBltQpgaQdcragl4uQuj3ZJAYQdG5oNFF9k6yBakRZJuylqC3i6zr6gTCR2xxn0DPT0GZtHHRMSflBNKoIoezqBezkzCHQEld2rjoSCYxGMTMvU0xBxlth0UFRl3WlDaWMwd4qkoQhAvTGheWM9oOi/lS5nlUmLazYgkyrIupSAO6oMf1aHCbK3gmFg3tHJQaet2V5faLA+ZqcRaYg1pf7xlvrdC+7ZhaLmQOwvvNbqrQcZVawy3nWhTVbrPRGg+LDWdnMF+/XYB2u11AIb2l6+5tpd0m+rk0f4YU0qrExGbJC9Dg7kgeVUi3qkxso3+58Q1x9ZBHFYJVeo2NrnrQRftvpmBQXMGBsDlxLEHjdBtSplEIUP+te7kDepdnLgm0SEj4clE5H+f42QFNyd/w2UpxrdAxEmZT43fd64ImCzX8vbXjutjhtG6i48CcC12YrEDzuvngJSUkoTlHBnl0hsYLzKZLWoFSFU9Dm6bhrQhlAsX9ON40O3VwBcLGSY/KerNagwpfoFUsbFriuyd9Nqm4BjEU+0E9DU1+5slJm2q7Bvly0tpF22OL8AQiJhA7x0VbUOoHVBpBflJ220xtQeIUFwFnWC9OipJAoPIAKD2hooIgHykLNNbAPYNAyn8sQKDaXaPHoZsTdkYsQKDU1XIKOgoCIPdogL6YQZdOd//pCoPYCS4CQc5O+jkIcnUSeA4GLwYL7+mqAd1daoOCP8WAIKa8xwIMcuy5fg6D3KIB/sAN3xLX3CTVS6BXFiBKKcajeph2IuUtv/WS53Qmef56PEg7irrce+NOCMUUlhEzLMEFRFpIx5mT3lzZ6tEpI3sOIU43+YQMHALoI+Vg0UEfnLhqhAlsO5l3QuVLT5I4akR7GMagn+RkT/opCOsiYIy63m6zYLQBYXn7QOq6vlW32zXxmbA7UlqACu819QzQ73+n0RcUJBjucRPHSn3y08A7uQY07GVSI10B7X5WD4cnOXXbJpzlC/qCvqAvCAD9A6M7x+SW47sWAAAAAElFTkSuQmCC" type="image/x-icon">
 </head>
 <body>
     <div class="controls">
         <div class="control-group">
             <label>Tag Width:</label>
-            <input type="range" id="width-control" min="50" max="120" value="69">
-            <span class="size-display" id="width-display">69mm</span>
+            <input type="range" id="width-control" min="50" max="120" value="90">
+            <span class="size-display" id="width-display">90mm</span>
         </div>
         <div class="control-group">
             <label>Tag Height:</label>
-            <input type="range" id="height-control" min="30" max="80" value="44">
-            <span class="size-display" id="height-display">44mm</span>
+            <input type="range" id="height-control" min="40" max="100" value="60">
+            <span class="size-display" id="height-display">60mm</span>
         </div>
         <div class="control-group">
-            <label>Name Font Size:</label>
-            <input type="range" id="font-control" min="3" max="15" value="7">
-            <span class="size-display" id="font-display">7mm</span>
-        </div>
-        <div class="control-group">
-            <label>Desc Font Size:</label>
-            <input type="range" id="desc-font-control" min="2" max="10" value="4">
-            <span class="size-display" id="desc-font-display">4mm</span>
+            <label>Font Size:</label>
+            <input type="range" id="font-control" min="3" max="15" value="10">
+            <span class="size-display" id="font-display">10mm</span>
         </div>
         <button onclick="resetSizes()">Reset Sizes</button>
+        <button onclick="addNewPage()" style="cursor: pointer;">Add Page</button>
+        <button onclick="removeCurrentPage()" style="cursor: pointer;">Remove Page</button>
         <button onclick="printTags()">Print Tags</button>
         <button onclick="exportToJson()">Save to JSON</button>
         <button onclick="document.getElementById('file-input').click()">Load from JSON</button>
         <input type="file" id="file-input" class="file-input" accept=".json" onchange="importFromJson(event)">
-        <button class="txt-upload-btn" onclick="document.getElementById('txt-input').click()">Upload TXT</button>
-        <input type="file" id="txt-input" class="file-input" accept=".txt" onchange="importFromTxt(event)">
-        <button class="veg-btn" title="Set as Vegetarian" onclick="setDescription('🟢 VEGETARIAN')">V</button>
-        <button class="nonveg-btn" title="Set as Non-Vegetarian" onclick="setDescription('🔴 NON-VEGETARIAN')">NV</button>
     </div>
 
     <div class="notification" id="notification">Tag deleted</div>
@@ -274,20 +216,28 @@
         const widthControl = document.getElementById('width-control');
         const heightControl = document.getElementById('height-control');
         const fontControl = document.getElementById('font-control');
-        const descFontControl = document.getElementById('desc-font-control');
         const widthDisplay = document.getElementById('width-display');
         const heightDisplay = document.getElementById('height-display');
         const fontDisplay = document.getElementById('font-display');
-        const descFontDisplay = document.getElementById('desc-font-display');
         const pagesContainer = document.getElementById('pages-container');
         const notification = document.getElementById('notification');
 
-        // Track currently selected tag
-        let selectedTag = null;
+        // Template for a new tag
+        const tagTemplate = `
+            <div class="tag">
+                <div class="delete-btn">×</div>
+                <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
+                <div class="accent-bar"></div>
+                <div class="food-name" contenteditable="true">NEW ITEM</div>
+            </div>
+        `;
 
-        // Default text constants
-        const DEFAULT_FOOD_NAME = "NEW ITEM";
-        const DEFAULT_DESCRIPTION = "DESCRIPTION";
+        // Template for a new page
+        const pageTemplate = `
+            <div class="page">
+                ${tagTemplate.repeat(8)}
+            </div>
+        `;
 
         // Initialize with one page
         addNewPage();
@@ -296,10 +246,8 @@
         widthControl.addEventListener('input', updateSizes);
         heightControl.addEventListener('input', updateSizes);
         fontControl.addEventListener('input', updateFontSizes);
-        descFontControl.addEventListener('input', updateDescFontSizes);
 
-        function showNotification(message = "Tag deleted") {
-            notification.textContent = message;
+        function showNotification() {
             notification.style.opacity = 1;
             setTimeout(() => {
                 notification.style.opacity = 0;
@@ -317,20 +265,6 @@
                 tag.style.width = `${width}mm`;
                 tag.style.height = `${height}mm`;
             });
-            
-            // Update grid layout
-            document.querySelectorAll('.page').forEach(page => {
-                page.style.gridTemplateColumns = `repeat(2, ${width}mm)`;
-                page.style.gridTemplateRows = `repeat(5, ${height}mm)`;
-                adjustPagePadding(page);
-            });
-        }
-
-        function adjustPagePadding(page) {
-            const height = heightControl.value;
-            const totalHeight = 5 * parseInt(height) + 4 * 12; // 5 rows + 4 gaps
-            const pagePaddingTopBottom = Math.max(5, (297 - totalHeight) / 2);
-            page.style.padding = `${pagePaddingTopBottom}mm 15mm`;
         }
 
         function updateFontSizes() {
@@ -342,218 +276,105 @@
             });
         }
 
-        function updateDescFontSizes() {
-            const fontSize = descFontControl.value;
-            descFontDisplay.textContent = `${fontSize}mm`;
-            
-            document.querySelectorAll('.food-description').forEach(desc => {
-                desc.style.fontSize = `${fontSize}mm`;
-            });
-        }
-
         function resetSizes() {
-            widthControl.value = 69;
-            heightControl.value = 44;
-            fontControl.value = 7;
-            descFontControl.value = 4;
+            widthControl.value = 90;
+            heightControl.value = 60;
+            fontControl.value = 10;
             updateSizes();
             updateFontSizes();
-            updateDescFontSizes();
         }
 
         function printTags() {
-            // First reorganize tags to remove empty pages
-            reorganizeTagsForPrinting();
-            
-            // Hide controls and print
             document.querySelector('.controls').style.display = 'none';
             window.print();
             setTimeout(() => {
                 document.querySelector('.controls').style.display = 'flex';
-                reorganizeTags(); // Return to normal view after printing
             }, 1000);
-        }
-
-        function reorganizeTagsForPrinting() {
-            const allTags = Array.from(document.querySelectorAll('.tag'));
-            
-            // Clear all pages
-            document.querySelectorAll('.page').forEach(page => page.remove());
-            
-            // 2 columns × 5 rows = 10 tags per page
-            const tagsPerPage = 10;
-            
-            // Create pages with tags
-            for (let i = 0; i < allTags.length; i += tagsPerPage) {
-                const page = addNewPage();
-                const pageTags = allTags.slice(i, i + tagsPerPage);
-                
-                pageTags.forEach(tag => {
-                    page.appendChild(tag);
-                });
-                
-                // Fill remaining slots with empty tags
-                const emptyTagsNeeded = tagsPerPage - pageTags.length;
-                for (let j = 0; j < emptyTagsNeeded; j++) {
-                    const emptyTag = createTag("", "");
-                    emptyTag.classList.add('tag-empty');
-                    page.appendChild(emptyTag);
-                }
-            }
         }
 
         function addNewPage() {
             const newPage = document.createElement('div');
-            newPage.className = 'page';
+            newPage.innerHTML = pageTemplate;
             pagesContainer.appendChild(newPage);
             updateSizes();
             updateFontSizes();
-            updateDescFontSizes();
-            return newPage;
+            setupTagDeletion(newPage);
         }
 
-        function createTag(name = DEFAULT_FOOD_NAME, description = DEFAULT_DESCRIPTION) {
-            const tag = document.createElement('div');
-            tag.className = 'tag';
-            tag.innerHTML = `
-                <div class="delete-btn">×</div>
-                <img class="logo" src="https://i.ibb.co/m5kn0Shy/forchetta-without-background-logo.png" alt="Forchetta Logo">
-                <div class="accent-bar"></div>
-                <div class="food-name" contenteditable="true">${name}</div>
-                <div class="food-description" contenteditable="true">${description}</div>
-            `;
-            
-            // Add event handlers
-            const deleteBtn = tag.querySelector('.delete-btn');
-            deleteBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (tag === selectedTag) {
-                    selectedTag = null;
-                }
-                tag.remove();
-                reorganizeTags();
-                showNotification();
-            });
-            
-            tag.addEventListener('click', function(e) {
-                if (e.target.closest('[contenteditable="true"], .delete-btn')) {
-                    return;
-                }
-                
-                if (selectedTag) {
-                    selectedTag.classList.remove('tag-active');
-                }
-                
-                this.classList.add('tag-active');
-                selectedTag = this;
-            });
-            
-            // Setup content editable focus
-            const nameElement = tag.querySelector('.food-name');
-            const descElement = tag.querySelector('.food-description');
-            
-            nameElement.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const range = document.createRange();
-                range.selectNodeContents(this);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            });
-            
-            descElement.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const range = document.createRange();
-                range.selectNodeContents(this);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            });
-            
-            return tag;
-        }
-
-        function addTagToPage(name = DEFAULT_FOOD_NAME, description = DEFAULT_DESCRIPTION, position = 'append') {
-            // Get all pages
+        function removeCurrentPage() {
             const pages = document.querySelectorAll('.page');
-            let currentPage = pages[pages.length - 1];
-            
-            // Check if current page is full (10 tags)
-            if (currentPage.querySelectorAll('.tag').length >= 10) {
-                currentPage = addNewPage();
-            }
-            
-            const tag = createTag(name, description);
-            if (position === 'prepend') {
-                currentPage.insertBefore(tag, currentPage.firstChild);
+            if (pages.length > 1) {
+                pages[pages.length - 1].remove();
             } else {
-                currentPage.appendChild(tag);
+                alert("You need to keep at least one page.");
             }
-            
-            // Ensure we maintain 10 tags per page
-            reorganizeTags();
-            
-            return tag;
         }
 
-        function setDescription(text) {
-            if (selectedTag) {
-                const descElement = selectedTag.querySelector('.food-description');
-                descElement.textContent = text;
-                
-                const range = document.createRange();
-                range.selectNodeContents(descElement);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else {
-                alert("Please select a tag first by clicking on it (but not on the text area).");
-            }
+        function setupTagDeletion(page) {
+            const deleteButtons = page.querySelectorAll('.delete-btn');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const tag = this.closest('.tag');
+                    tag.remove();
+                    reorganizeTags();
+                    showNotification();
+                });
+            });
         }
 
         function reorganizeTags() {
-            const allTags = Array.from(document.querySelectorAll('.tag:not(.tag-empty)'));
+            const allTags = Array.from(document.querySelectorAll('.tag'));
+            const pages = document.querySelectorAll('.page');
             
-            // Clear all pages and empty tags
-            document.querySelectorAll('.page').forEach(page => page.remove());
-            document.querySelectorAll('.tag-empty').forEach(tag => tag.remove());
+            // Clear all tags from pages
+            pages.forEach(page => {
+                const tagsInPage = page.querySelectorAll('.tag');
+                tagsInPage.forEach(tag => tag.remove());
+            });
             
-            // Calculate how many pages we need (10 tags per page)
-            const totalTags = allTags.length;
-            const totalPages = Math.ceil(totalTags / 10) || 1;
+            // Redistribute tags evenly across pages
+            let currentPageIndex = 0;
+            let tagsInCurrentPage = 0;
             
-            // Create pages
-            for (let i = 0; i < totalPages; i++) {
-                const page = addNewPage();
-                
-                // Add real tags for this page (10 per page)
-                const startIdx = i * 10;
-                const endIdx = startIdx + 10;
-                const pageTags = allTags.slice(startIdx, endIdx);
-                
-                pageTags.forEach(tag => {
-                    page.appendChild(tag);
-                });
-                
-                // Fill remaining slots with empty tags
-                const emptyTagsNeeded = 10 - pageTags.length;
-                for (let j = 0; j < emptyTagsNeeded; j++) {
-                    const emptyTag = createTag("", "");
-                    emptyTag.classList.add('tag-empty');
-                    page.appendChild(emptyTag);
+            allTags.forEach((tag, index) => {
+                if (tagsInCurrentPage >= 8) {
+                    currentPageIndex++;
+                    tagsInCurrentPage = 0;
+                    
+                    // Add new page if needed
+                    if (!pages[currentPageIndex]) {
+                        addNewPage();
+                        pages = document.querySelectorAll('.page'); // Refresh pages list
+                    }
                 }
-            }
+                
+                pages[currentPageIndex].appendChild(tag);
+                tagsInCurrentPage++;
+            });
+            
+            // Remove empty pages (except one)
+            const emptyPages = Array.from(pages).filter(page => {
+                return page.querySelectorAll('.tag').length === 0;
+            });
+            
+            emptyPages.forEach((page, index) => {
+                if (document.querySelectorAll('.page').length > 1 && index < emptyPages.length - 1) {
+                    page.remove();
+                }
+            });
+            
+            // Reattach delete handlers to all tags
+            document.querySelectorAll('.page').forEach(page => {
+                setupTagDeletion(page);
+            });
         }
 
         function exportToJson() {
             const pages = Array.from(document.querySelectorAll('.page')).map(page => {
-                return Array.from(page.querySelectorAll('.tag:not(.tag-empty)')).map(tag => {
-                    const name = tag.querySelector('.food-name').textContent;
-                    const desc = tag.querySelector('.food-description').textContent;
-                    
+                return Array.from(page.querySelectorAll('.tag')).map(tag => {
                     return {
-                        foodName: name === DEFAULT_FOOD_NAME ? "" : name,
-                        foodDescription: desc === DEFAULT_DESCRIPTION ? "" : desc
+                        foodName: tag.querySelector('.food-name').textContent
                     };
                 });
             });
@@ -562,7 +383,6 @@
                 width: widthControl.value,
                 height: heightControl.value,
                 fontSize: fontControl.value,
-                descFontSize: descFontControl.value,
                 pages: pages
             };
             
@@ -588,28 +408,35 @@
                     
                     // Clear existing pages
                     pagesContainer.innerHTML = '';
-                    addNewPage();
                     
                     // Apply settings
-                    widthControl.value = data.width || 69;
-                    heightControl.value = data.height || 44;
-                    fontControl.value = data.fontSize || 7;
-                    descFontControl.value = data.descFontSize || 4;
+                    widthControl.value = data.width || 90;
+                    heightControl.value = data.height || 60;
+                    fontControl.value = data.fontSize || 10;
                     updateSizes();
                     updateFontSizes();
-                    updateDescFontSizes();
                     
-                    // Create tags from saved data
+                    // Create pages and tags
                     data.pages.forEach(pageData => {
-                        pageData.forEach(tagData => {
-                            addTagToPage(
-                                tagData.foodName || DEFAULT_FOOD_NAME,
-                                tagData.foodDescription || DEFAULT_DESCRIPTION
-                            );
+                        const newPage = document.createElement('div');
+                        newPage.innerHTML = pageTemplate;
+                        
+                        // Update tags with saved data
+                        const tags = newPage.querySelectorAll('.tag');
+                        pageData.forEach((tagData, index) => {
+                            if (index < tags.length) {
+                                tags[index].querySelector('.food-name').textContent = tagData.foodName || 'NEW ITEM';
+                            }
                         });
+                        
+                        pagesContainer.appendChild(newPage);
+                        setupTagDeletion(newPage);
                     });
                     
-                    showNotification(`Imported ${data.pages.flat().length} tags from JSON`);
+                    // If no pages were loaded, add one
+                    if (data.pages.length === 0) {
+                        addNewPage();
+                    }
                 } catch (error) {
                     alert('Error loading JSON file: ' + error.message);
                 }
@@ -620,70 +447,10 @@
             event.target.value = '';
         }
 
-        function importFromTxt(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const content = e.target.result;
-                    // Split by newlines and filter out empty lines
-                    const lines = content.split(/\r?\n/)
-                        .map(line => line.trim())
-                        .filter(line => line !== '');
-                    
-                    // Clear existing pages
-                    pagesContainer.innerHTML = '';
-                    addNewPage();
-                    
-                    // Process each line in original order
-                    lines.forEach(line => {
-                        // Split by first separator found (-, –, or :)
-                        const separators = ['–', '-', ':'];
-                        let separatorIndex = -1;
-                        
-                        for (const sep of separators) {
-                            const idx = line.indexOf(sep);
-                            if (idx > -1 && (separatorIndex === -1 || idx < separatorIndex)) {
-                                separatorIndex = idx;
-                            }
-                        }
-                        
-                        let name = line.trim().toUpperCase();
-                        let description = DEFAULT_DESCRIPTION;
-                        
-                        if (separatorIndex >= 0) {
-                            // Everything before separator is name
-                            name = line.substring(0, separatorIndex).trim().toUpperCase();
-                            // Everything after separator is description
-                            description = line.substring(separatorIndex + 1).trim().toUpperCase();
-                            // Clean up any remaining separators from name
-                            name = name.replace(/[-–:]+$/, '').trim();
-                        }
-                        
-                        // Add tag (appending to maintain original order)
-                        addTagToPage(name, description);
-                    });
-                    
-                    // Scroll to top to show first tag
-                    window.scrollTo(0, 0);
-                    
-                    showNotification(`Imported ${lines.length} items from TXT`);
-                    
-                } catch (error) {
-                    console.error('Error processing TXT file:', error);
-                    showNotification('Error processing TXT file: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-            
-            // Reset file input
-            event.target.value = '';
-        }
-
-        // Initialize with one empty tag
-        addTagToPage();
+        // Initialize tag deletion for existing pages
+        document.querySelectorAll('.page').forEach(page => {
+            setupTagDeletion(page);
+        });
     </script>
 </body>
 </html>
